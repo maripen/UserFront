@@ -1,12 +1,19 @@
 package com.userfront.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * Created by maripen on 2016. 11. 06..
  */
+@Entity
 public class SavingsTransaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Date date;
     private String description;
@@ -14,6 +21,9 @@ public class SavingsTransaction {
     private String status;
     private double amount;
     private BigDecimal availableBalance;
+
+    @ManyToOne
+    @JoinColumn(name = "savings_transaction_id")
     private SavingsAccount savingsAccount;
 
     public SavingsTransaction() {

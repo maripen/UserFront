@@ -1,18 +1,26 @@
 package com.userfront.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * Created by maripen on 2016. 11. 06..
  */
+@Entity
 public class SavingsAccount {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private int accountNumber;
     private BigDecimal accountBalance;
 
-    private List<SavingsTransaction> transactionList;
+    @OneToMany(mappedBy = "savingsAccount", cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<SavingsTransaction> savingsTransactionList;
 
     public Long getId() {
         return id;
@@ -38,12 +46,12 @@ public class SavingsAccount {
         this.accountBalance = accountBalance;
     }
 
-    public List<SavingsTransaction> getTransactionList() {
-        return transactionList;
+    public List<SavingsTransaction> getSavingsTransactionList() {
+        return savingsTransactionList;
     }
 
-    public void setTransactionList(List<SavingsTransaction> transactionList) {
-        this.transactionList = transactionList;
+    public void setSavingsTransactionList(List<SavingsTransaction> savingsTransactionList) {
+        this.savingsTransactionList = savingsTransactionList;
     }
 
 }

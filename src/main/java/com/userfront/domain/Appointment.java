@@ -1,17 +1,25 @@
 package com.userfront.domain;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * Created by maripen on 2016. 11. 06..
  */
+@Entity
 public class Appointment {
+
+    @Id
+    @GeneratedValue( strategy = GenerationType.AUTO)
     private Long id;
+
     private Date date;
     private String location;
     private String description;
     private boolean confirmed;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Long getId() {
@@ -60,5 +68,17 @@ public class Appointment {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "id=" + id +
+                ", date=" + date +
+                ", location='" + location + '\'' +
+                ", description='" + description + '\'' +
+                ", confirmed=" + confirmed +
+                ", user=" + user +
+                '}';
     }
 }
