@@ -1,6 +1,7 @@
 package com.userfront.controller;
 
 import com.userfront.domain.User;
+import com.userfront.service.RoleService;
 import com.userfront.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,7 @@ public class HomeController {
     private UserService userService;
 
     @Autowired
-    public HomeController(UserService userService) {
+    public HomeController(UserService userService, RoleService roleService) {
         this.userService = userService;
     }
 
@@ -55,7 +56,7 @@ public class HomeController {
             return "signup";
         }
 
-        userService.save(user);
+        userService.createUser(user);
 
         return "redirect:/";
     }
