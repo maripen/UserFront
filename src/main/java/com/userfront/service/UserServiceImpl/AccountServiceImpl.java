@@ -1,7 +1,6 @@
 package com.userfront.service.UserServiceImpl;
 
-import com.userfront.domain.PrimaryAccount;
-import com.userfront.domain.SavingsAccount;
+import com.userfront.domain.*;
 import com.userfront.repository.PrimaryAccountRepository;
 import com.userfront.repository.SavingsAccountRepository;
 import com.userfront.service.AccountService;
@@ -10,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.security.Principal;
+import java.util.Date;
 
 /**
  * Created by maripen on 2016. 11. 13..
@@ -57,7 +58,40 @@ public class AccountServiceImpl implements AccountService {
         return savingsAccountRepository.findByAccountNumber(savingsAccount.getAccountNumber());
     }
 
-    private int accountGen(){
+    @Override
+    public void deposit(String accountType, double amount, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+
+        if ("primary".equalsIgnoreCase(accountType)) {
+            PrimaryAccount primaryAccount = user.getPrimaryAccount();
+            primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().add(new BigDecimal(amount)));
+            primaryAccountRepository.save(primaryAccount);
+
+            Date date = new Date();
+            PrimaryTransaction primaryTransaction = new PrimaryTransaction(date,
+                    "Deposit to Primary Account",
+                    "Deposit",
+                    "Finished",
+                    amount,
+                    primaryAccount.getAccountBalance().add(new BigDecimal(amount)),
+                    primaryAccount);
+        } else if ("savings".equalsIgnoreCase(accountType)) {
+            SavingsAccount savingsAccount = user.getSavingsAccount();
+            savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().add(new BigDecimal(amount)));
+            savingsAccountRepository.save(savingsAccount);
+
+            Date date = new Date();
+            SavingsTransaction savingsTransaction = new SavingsTransaction(date,
+                    "Deposit to Savings Account",
+                    "Deposit",
+                    "Finished",
+                    amount,
+                    savingsAccount.getAccountBalance().add(new BigDecimal(amount)),
+                    savingsAccount);
+        }
+    }
+
+    private int accountGen() {
         return ++nextAccountNumber;
     }
 }

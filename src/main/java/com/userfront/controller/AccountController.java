@@ -3,11 +3,14 @@ package com.userfront.controller;
 import com.userfront.domain.PrimaryAccount;
 import com.userfront.domain.SavingsAccount;
 import com.userfront.domain.User;
+import com.userfront.service.AccountService;
 import com.userfront.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.security.Principal;
 
@@ -19,10 +22,12 @@ import java.security.Principal;
 public class AccountController {
 
     private UserService userService;
+    private AccountService accountService;
 
     @Autowired
-    public AccountController(UserService userService) {
+    public AccountController(UserService userService, AccountService accountService) {
         this.userService = userService;
+        this.accountService = accountService;
     }
 
     @RequestMapping("/primaryAccount")
@@ -43,6 +48,24 @@ public class AccountController {
         model.addAttribute("savingsAccount", savingsAccount);
 
         return "savingsAccount";
+    }
+
+    @RequestMapping(value = "/deposit", method = RequestMethod.GET)
+    public String deposit(Model model) {
+        model.addAttribute("accountType", "");
+        model.addAttribute("anount", "");
+
+        return "deposit";
+    }
+
+    @RequestMapping(value = "/deposit", method = RequestMethod.POST)
+    public String depositPost(@ModelAttribute("amount") String amount,
+                              @ModelAttribute("accountType") String accountType,
+                              Principal principal) {
+
+        accountService.deposit(accountType, Double.parseDouble(amount), principal);
+
+        return "redirect:/userFront";
     }
 
 }
