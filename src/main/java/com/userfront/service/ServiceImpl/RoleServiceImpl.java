@@ -1,4 +1,4 @@
-package com.userfront.service.UserServiceImpl;
+package com.userfront.service.ServiceImpl;
 
 import com.userfront.domain.security.Role;
 import com.userfront.repository.RoleRepository;

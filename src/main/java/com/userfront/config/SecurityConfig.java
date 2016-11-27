@@ -1,6 +1,6 @@
 package com.userfront.config;
 
-import com.userfront.service.UserServiceImpl.UserSecurityService;
+import com.userfront.service.ServiceImpl.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,13 +22,17 @@ import java.security.SecureRandom;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
-    @Autowired
-    private UserSecurityService userSecurityService;
+    private final UserSecurityService userSecurityService;
 
     private static final String SALT = "salt";
+
+    @Autowired
+    public SecurityConfig(Environment env, UserSecurityService userSecurityService) {
+        this.env = env;
+        this.userSecurityService = userSecurityService;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

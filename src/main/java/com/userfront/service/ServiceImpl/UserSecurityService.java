@@ -1,4 +1,4 @@
-package com.userfront.service.UserServiceImpl;
+package com.userfront.service.ServiceImpl;
 
 import com.userfront.repository.UserRepository;
 
@@ -19,7 +19,7 @@ public class UserSecurityService implements UserDetailsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserSecurityService.class);
 
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     public UserSecurityService(UserRepository userRepository) {
