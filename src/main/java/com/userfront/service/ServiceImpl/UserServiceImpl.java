@@ -1,10 +1,10 @@
 package com.userfront.service.ServiceImpl;
 
+import com.userfront.domain.User;
 import com.userfront.domain.security.Role;
 import com.userfront.domain.security.UserRole;
 import com.userfront.repository.RoleRepository;
 import com.userfront.repository.UserRepository;
-import com.userfront.domain.User;
 import com.userfront.service.AccountService;
 import com.userfront.service.RoleService;
 import com.userfront.service.UserService;
@@ -66,10 +66,9 @@ public class UserServiceImpl implements UserService {
     private User createUser(User user, Set<UserRole> userRoles) {
         User localUser = findByUsername(user.getUsername());
 
-        if(null != localUser) {
+        if (null != localUser) {
             LOG.info("User with username {} already exists. Nothing will be done");
-        }
-        else {
+        } else {
             String encryptedPassord = passwordEncoder.encode(user.getPassword());
             user.setPassword(encryptedPassord);
 
@@ -109,4 +108,8 @@ public class UserServiceImpl implements UserService {
         return null != findByEmail(email);
     }
 
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 }
