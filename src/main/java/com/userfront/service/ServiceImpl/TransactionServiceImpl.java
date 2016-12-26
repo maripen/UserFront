@@ -1,18 +1,17 @@
 package com.userfront.service.ServiceImpl;
 
 import com.userfront.domain.*;
-import com.userfront.repository.PrimaryAccountRepository;
-import com.userfront.repository.PrimaryTransactionRepository;
-import com.userfront.repository.SavingsAccountRepository;
-import com.userfront.repository.SavingsTransactionRepository;
+import com.userfront.repository.*;
 import com.userfront.service.TransactionService;
 import com.userfront.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by maripen on 2016. 11. 27..
@@ -25,18 +24,21 @@ public class TransactionServiceImpl implements TransactionService {
     private SavingsTransactionRepository savingsTransactionRepository;
     private PrimaryAccountRepository primaryAccountRepository;
     private SavingsAccountRepository savingsAccountRepository;
+    private RecipientRepository recipientRepository;
 
     @Autowired
     public TransactionServiceImpl(UserService userService,
                                   PrimaryTransactionRepository primaryTransactionRepository,
                                   SavingsTransactionRepository savingsTransactionRepository,
                                   PrimaryAccountRepository primaryAccountRepository,
-                                  SavingsAccountRepository savingsAccountRepository) {
+                                  SavingsAccountRepository savingsAccountRepository,
+                                  RecipientRepository recipientRepository) {
         this.userService = userService;
         this.primaryTransactionRepository = primaryTransactionRepository;
         this.savingsTransactionRepository = savingsTransactionRepository;
         this.primaryAccountRepository = primaryAccountRepository;
         this.savingsAccountRepository = savingsAccountRepository;
+        this.recipientRepository = recipientRepository;
     }
 
     @Override
@@ -112,5 +114,26 @@ public class TransactionServiceImpl implements TransactionService {
         } else {
             throw new Exception("Invalid transfer");
         }
+    }
+
+    @Override
+    public List<Recipient> findRecipientList(Principal principal) {
+        String userName = principal.getName();
+
+        return recipientRepository.findAll().stream()
+                .filter(recipient -> userName.equals(recipient.getUser().getUsername()))
+                .collect(Collectors.toList());
+    }
+
+    public Recipient saveRecipient(Recipient recipient) {
+        return recipientRepository.save(recipient);
+    }
+
+    public Recipient findRecipientByName(String recipientName) {
+        return recipientRepository.findByName(recipientName);
+    }
+
+    public void deleteRecipientByName(String recipientName) {
+        recipientRepository.deleteByName(recipientName);
     }
 }
