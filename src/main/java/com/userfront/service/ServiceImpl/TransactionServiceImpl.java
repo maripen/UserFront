@@ -83,7 +83,7 @@ public class TransactionServiceImpl implements TransactionService {
                                         SavingsAccount savingsAccount) throws Exception {
         Date date = new Date();
 
-        if ("Primary".equals(transferFrom) && "Savings".equalsIgnoreCase(transferTo)) {
+        if ("primary".equalsIgnoreCase(transferFrom) && "savings".equalsIgnoreCase(transferTo)) {
             primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)));
             savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().add(new BigDecimal(amount)));
             primaryAccountRepository.save(primaryAccount);
@@ -97,7 +97,7 @@ public class TransactionServiceImpl implements TransactionService {
                     primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)),
                     primaryAccount);
             primaryTransactionRepository.save(primaryTransaction);
-        } else if ("Savings".equals(transferFrom) && "Primary".equalsIgnoreCase(transferTo)) {
+        } else if ("savings".equalsIgnoreCase(transferFrom) && "primary".equalsIgnoreCase(transferTo)) {
             savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().subtract(new BigDecimal(amount)));
             primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().add(new BigDecimal(amount)));
             primaryAccountRepository.save(primaryAccount);
@@ -135,5 +135,41 @@ public class TransactionServiceImpl implements TransactionService {
 
     public void deleteRecipientByName(String recipientName) {
         recipientRepository.deleteByName(recipientName);
+    }
+
+    public void toSomeoneElseTransfer(Recipient recipient,
+                                      String accountType,
+                                      String amount,
+                                      PrimaryAccount primaryAccount,
+                                      SavingsAccount savingsAccount) throws Exception {
+        Date date = new Date();
+
+        if ("primary".equalsIgnoreCase(accountType)) {
+            primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            primaryAccountRepository.save(primaryAccount);
+
+            PrimaryTransaction primaryTransaction = new PrimaryTransaction(date,
+                    "Transfer to " + recipient.getName(),
+                    "Transfer",
+                    "Finished",
+                    Double.parseDouble(amount),
+                    primaryAccount.getAccountBalance(),
+                    primaryAccount);
+            primaryTransactionRepository.save(primaryTransaction);
+        } else if ("savings".equalsIgnoreCase(accountType)) {
+            savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            savingsAccountRepository.save(savingsAccount);
+
+            SavingsTransaction savingsTransaction = new SavingsTransaction(date,
+                    "Transfer to " + recipient.getName(),
+                    "Transfer",
+                    "Finished",
+                    Double.parseDouble(amount),
+                    savingsAccount.getAccountBalance(),
+                    savingsAccount);
+            savingsTransactionRepository.save(savingsTransaction);
+        } else {
+            throw new Exception("Invalid transfer");
+        }
     }
 }
