@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -85,6 +86,23 @@ public class UserServiceImpl implements UserService {
     }
 
     public void save(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<User> findUserList() {
+        return userRepository.findAll();
+    }
+
+    public void enableUser(String username) {
+        User user = userRepository.findByUsername(username);
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    public void disableUser(String username) {
+        User user = userRepository.findByUsername(username);
+        user.setEnabled(false);
         userRepository.save(user);
     }
 

@@ -2,6 +2,8 @@ package com.userfront.service;
 
 import com.userfront.domain.User;
 
+import java.util.List;
+
 /**
  * Created by maripen on 2016. 11. 13..
  */
@@ -23,4 +25,9 @@ public interface UserService {
 
     User saveUser(User user);
 
+    List<User> findUserList();
+
+    void enableUser(String username);
+
+    void disableUser(String username);
 }
